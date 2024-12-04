@@ -1,26 +1,22 @@
-package com.edureka.sagaorchestrator.domain;
+package com.edureka.hotelservice.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.*;
-import java.io.Serializable;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "order_table")
-/*@Data
-@Builder
-@ToString*/
-//@Getter
-//@Setter
+//@Data
+//@Getter @Setter
 //@Builder
 //@NoArgsConstructor
 //@ToString
-public class Order implements Serializable {
+public class Order {
 	
 	
     public Order() {
@@ -28,17 +24,26 @@ public class Order implements Serializable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long hotelOrderId;
     private Long orderId;
-    @Enumerated(EnumType.STRING)
-    private OrderState orderState;
-    @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+//    @Enumerated(EnumType.STRING)
+    private String orderState;
+//    @Enumerated(EnumType.STRING)
+    private String orderStatus;
     private String sourceLocation;
     private String destinationLocation;
 
     private BigDecimal amount;
 
     private LocalDate bookingDate;
+
+	public Long getHotelOrderId() {
+		return hotelOrderId;
+	}
+
+	public void setHotelOrderId(Long hotelOrderId) {
+		this.hotelOrderId = hotelOrderId;
+	}
 
 	public Long getOrderId() {
 		return orderId;
@@ -48,19 +53,19 @@ public class Order implements Serializable {
 		this.orderId = orderId;
 	}
 
-	public OrderState getOrderState() {
+	public String getOrderState() {
 		return orderState;
 	}
 
-	public void setOrderState(OrderState orderState) {
+	public void setOrderState(String orderState) {
 		this.orderState = orderState;
 	}
 
-	public OrderStatus getOrderStatus() {
+	public String getOrderStatus() {
 		return orderStatus;
 	}
 
-	public void setOrderStatus(OrderStatus orderStatus) {
+	public void setOrderStatus(String orderStatus) {
 		this.orderStatus = orderStatus;
 	}
 

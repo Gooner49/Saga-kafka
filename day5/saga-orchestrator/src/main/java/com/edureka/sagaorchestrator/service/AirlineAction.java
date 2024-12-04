@@ -23,16 +23,20 @@ public class AirlineAction implements Action<OrderState, OrderEvent> {
     private final JmsTemplate jmsTemplate;
     private final OrderRepository orderRepository;
     
-    public AirlineAction(JmsTemplate jmsTemplate, OrderRepository orderRepository) 
-    {
+    
+
+
+    public AirlineAction(JmsTemplate jmsTemplate, OrderRepository orderRepository) {
 		super();
 		this.jmsTemplate = jmsTemplate;
 		this.orderRepository = orderRepository;
-    }
+	}
 
-    @Override
-    public void execute(StateContext<OrderState, OrderEvent> context) 
-    {
+
+
+
+	@Override
+    public void execute(StateContext<OrderState, OrderEvent> context) {
         System.out.println("Airline Action");
 //        String orderId = (String) context.getMessage().getHeaders().get("ORDER_ID_HEADER");
         String orderId = (String) context.getMessage().getHeaders().get("ORDER_ID_HEADER");

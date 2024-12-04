@@ -47,6 +47,7 @@ public class OrderService {
         order.setOrderStatus(OrderStatus.NEW);
         Order savedOrder = orderRepository.saveAndFlush(order);
         System.out.println("$$$$ orderId " + order.getOrderId() + " $$$$");
+
         sendOrderEvent(order, OrderEvent.BOOK_AIRLINE);
         return savedOrder;
     }
