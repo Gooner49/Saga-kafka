@@ -1,17 +1,14 @@
-package com.edureka.hotelservice.domain;
+package com.edureka.airlineservice.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
-//import javax.persistence.*;
+import jakarta.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import jakarta.persistence.*;
 
 @Entity
-@Table(name = "order_hotel")
+@Table(name = "order_airline")
 //@Data
 //@Getter @Setter
 //@Builder
@@ -19,13 +16,12 @@ import jakarta.persistence.*;
 //@ToString
 public class Order {
 	
-	
     public Order() {
 	}
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long hotelOrderId;
+    private Long airlineOrderId;
     private Long orderId;
 //    @Enumerated(EnumType.STRING)
     private String orderState;
@@ -38,12 +34,12 @@ public class Order {
 
     private LocalDate bookingDate;
 
-	public Long getHotelOrderId() {
-		return hotelOrderId;
+	public Long getAirlineOrderId() {
+		return airlineOrderId;
 	}
 
-	public void setHotelOrderId(Long hotelOrderId) {
-		this.hotelOrderId = hotelOrderId;
+	public void setAirlineOrderId(Long airlineOrderId) {
+		this.airlineOrderId = airlineOrderId;
 	}
 
 	public Long getOrderId() {

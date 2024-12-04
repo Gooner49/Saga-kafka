@@ -1,7 +1,7 @@
-package com.edureka.hotelservice;
+package com.edureka.airlineservice;
 
-import com.edureka.hotelservice.domain.Order;
-import com.edureka.hotelservice.repository.HotelRepository;
+import com.edureka.airlineservice.domain.Order;
+import com.edureka.airlineservice.repository.AirlineRepository;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -19,24 +19,43 @@ import org.springframework.jms.support.converter.MessageType;
 
 import jakarta.jms.ConnectionFactory;
 import jakarta.jms.Queue;
+import jakarta.jms.TextMessage;
 import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootApplication
 @EnableJms
-public class HotelServiceApplication {
-
+public class AirlineServiceApplication {
 	@Autowired
 	private JmsTemplate jmsTemplate;
 	@Autowired
-	private HotelRepository hotelRepository;
+	private AirlineRepository airlineRepository;
 
 	@Autowired
 	private Queue sagaQueue;
-	@Bean
-	public Queue sagaQueue() {
-		return new ActiveMQQueue("saga-queue");
+
+	@JmsListener(destination = "airline-queue")
+	public void listen(Order order) {
+		System.out.println("Message Consumed: " + order);
+		if (order.getOrderStatus().equals("NEW")) {
+			order.setOrderStatus("AIRLINE_SUCCESS");
+			// book airline ticket
+			airlineRepository.save(order); // Tx-Committed
+		} else if (order.getOrderStatus().equals("HOTEL_FAILED")) {
+			order.setOrderStatus("FAILED");
+			// compensate airline booking
+			airlineRepository.save(order); // Tx-Committed
+		}
+
+		jmsTemplate.convertAndSend(sagaQueue, order);
 	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(AirlineServiceApplication.class, args);
+	}
+	
+	
+	
 	@Bean // Serialize message content to json using TextMessage
 	public MessageConverter jacksonJmsMessageConverter() {
 		MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
@@ -57,24 +76,12 @@ public class HotelServiceApplication {
 		configurer.configure(factory, connectionFactory);
 		return factory;
 	}
-
-	@JmsListener(destination = "hotel-queue")
-	public void listen(Order order) {
-		System.out.println("Message Consumed: " + order);
-		if (order.getOrderId() % 2 == 0) {
-			order.setOrderStatus("HOTEL_FAILED");
-			// initiate airline compensate
-			hotelRepository.save(order);
-		} else {
-			order.setOrderStatus("HOTEL_SUCCESS");
-			// finalize booking
-			hotelRepository.save(order);
-		}
-		jmsTemplate.convertAndSend(sagaQueue, order);
+	
+	@Bean
+	public Queue sagaQueue() {
+		return new ActiveMQQueue("saga-queue");
 	}
 
-	public static void main(String[] args) {
-		SpringApplication.run(HotelServiceApplication.class, args);
-	}
+	
 
 }
