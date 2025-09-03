@@ -1,0 +1,22 @@
+CompletableFuture<User> userFuture = CompletableFuture.supplyAsync(() -> userService.getUser());
+CompletableFuture<List<Product>> productFuture = CompletableFuture.supplyAsync(() -> productService.getProducts());
+CompletableFuture<List<Order>> orderFuture = CompletableFuture.supplyAsync(() -> orderService.getOrders());
+
+// Combine all
+CompletableFuture<CombinedDTO> combined = userFuture.thenCombine(productFuture, (user, products) ->
+        new CombinedDTO(user, products, null))
+    .thenCombine(orderFuture, (dto, orders) -> {
+        dto.setOrders(orders);
+        return dto;
+    });
+
+CombinedDTO result = combined.join(); // Wait and get result
+
+Future<User> userFuture = executor.submit(() -> getUser());
+Future<List<Order>> orderFuture = executor.submit(() -> getOrders());
+
+// Wait for both to finish (blocking)
+User user = userFuture.get();
+List<Order> orders = orderFuture.get();
+
+return new UserOrderDTO(user, orders);
